@@ -47,6 +47,25 @@ Open `http://localhost:3000`.
 - At least one supported model provider key, depending on which models you enable
 - LibreOffice for DOC/DOCX to PDF conversion
 
+## Model provider configuration
+
+Mike supports Gemini, Anthropic Claude, and OpenAI models. For the default
+OpenAI API, set `OPENAI_API_KEY` in `backend/.env`; Mike will call
+`https://api.openai.com/v1/responses` with bearer-token authentication.
+
+Self-hosted deployments can point the existing OpenAI provider at an
+OpenAI-compatible Responses API endpoint, such as Azure OpenAI / Azure AI
+Foundry:
+
+```env
+OPENAI_API_KEY=your-azure-openai-api-key
+OPENAI_BASE_URL=https://your-resource.cognitiveservices.azure.com/openai/v1
+OPENAI_AUTH_HEADER=api-key
+```
+
+Azure deployment names should match the Mike model IDs selected in the app,
+such as `gpt-5.5`, `gpt-5.4-mini`, and `gpt-5.4-nano`.
+
 ## Checks
 
 ```bash

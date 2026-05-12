@@ -7,7 +7,7 @@ import type {
     StreamChatResult,
 } from "./types";
 
-const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
+const DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1";
 const MAX_OUTPUT_TOKENS = 16384;
 
 type ResponseInputItem =
@@ -37,6 +37,22 @@ type ResponseStreamEvent = {
 
 function apiKey(override?: string | null): string {
     return override?.trim() || process.env.OPENAI_API_KEY?.trim() || "";
+}
+
+function trimTrailingSlash(value: string): string {
+    return value.replace(/\/+$/, "");
+}
+
+function responsesUrl(): string {
+    const baseUrl =
+        process.env.OPENAI_BASE_URL?.trim() || DEFAULT_OPENAI_BASE_URL;
+    return `${trimTrailingSlash(baseUrl)}/responses`;
+}
+
+function authHeaders(apiKey: string): Record<string, string> {
+    const authHeader = process.env.OPENAI_AUTH_HEADER?.trim().toLowerCase();
+    if (authHeader === "api-key") return { "api-key": apiKey };
+    return { Authorization: `Bearer ${apiKey}` };
 }
 
 function toResponseTools(tools: OpenAIToolSchema[]): ResponseFunctionTool[] {
@@ -109,10 +125,10 @@ async function createResponse(params: {
     reasoningSummary?: boolean;
     apiKey: string;
 }): Promise<Response> {
-    const response = await fetch(OPENAI_RESPONSES_URL, {
+    const response = await fetch(responsesUrl(), {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${params.apiKey}`,
+            ...authHeaders(params.apiKey),
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
