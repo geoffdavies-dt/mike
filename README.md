@@ -114,6 +114,26 @@ Open `http://localhost:3000`.
 
 **The model picker shows a missing-key warning.** Add a key for that provider in **Account > Models & API Keys**, or configure the provider key in `backend/.env` and restart the backend.
 
+## Model provider configuration
+
+Mike supports Gemini, Anthropic Claude, and OpenAI models. For the default
+OpenAI API, set `OPENAI_API_KEY` in `backend/.env`; Mike will call
+`https://api.openai.com/v1/responses` with bearer-token authentication.
+
+Self-hosted deployments can point the existing OpenAI provider at an
+OpenAI-compatible Responses API endpoint, such as Azure OpenAI / Azure AI
+Foundry:
+
+```env
+OPENAI_API_KEY=your-azure-openai-api-key
+OPENAI_BASE_URL=https://your-resource.cognitiveservices.azure.com/openai/v1
+OPENAI_AUTH_HEADER=api-key
+```
+
+Azure deployment names should match the Mike model IDs selected in the app,
+such as `gpt-5.5`, `gpt-5.4-mini`, and `gpt-5.4-nano`.
+
+## Checks
 **DOC or DOCX conversion fails.** Install LibreOffice locally and restart the backend so document conversion commands are available on the process path.
 
 ## Useful Checks
